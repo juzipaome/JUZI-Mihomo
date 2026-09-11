@@ -23,9 +23,9 @@ worker/wrangler.toml.example
 
 ## GitHub
 
-建议创建 Public Repository：`JUZI-Mihomo`
+Public Repository：[juzipaome/JUZI-Mihomo](https://github.com/juzipaome/JUZI-Mihomo)
 
-仓库创建后，模板 Raw 地址类似：
+模板 Raw 地址：
 
 ```text
 https://raw.githubusercontent.com/juzipaome/JUZI-Mihomo/main/config/JUZI-PC.yaml
@@ -33,41 +33,23 @@ https://raw.githubusercontent.com/juzipaome/JUZI-Mihomo/main/config/JUZI-PC.yaml
 
 ## Cloudflare Worker
 
-进入 `worker/`：
+进入 `worker/` 后执行：
 
-```bash
-npm install -g wrangler
-cp wrangler.toml.example wrangler.toml
-wrangler login
+```powershell
+Copy-Item .\wrangler.toml.example .\wrangler.toml
+npx wrangler@latest login
+npx wrangler@latest deploy
 ```
 
-把 `wrangler.toml` 里的 `TEMPLATE_URL` 改成上面的 GitHub Raw 地址。
+`TEMPLATE_URL` 已指向本仓库的 GitHub Raw 配置。部署后，用 Cloudflare Secret 保存真实凭据：
 
-保存真实机场订阅 URL：
-
-```bash
-wrangler secret put IKUUU_URL
+```powershell
+npx wrangler@latest secret put IKUUU_URL
+$token = py -3 -c "import secrets; print(secrets.token_urlsafe(32))"
+$token | npx wrangler@latest secret put SUB_TOKEN
 ```
 
-生成随机订阅密钥：
-
-```bash
-python -c "import secrets; print(secrets.token_urlsafe(32))"
-```
-
-保存随机密钥：
-
-```bash
-wrangler secret put SUB_TOKEN
-```
-
-部署：
-
-```bash
-wrangler deploy
-```
-
-Clash Verge Rev 最终订阅：
+`wrangler.toml` 已被 `.gitignore` 忽略，不要提交它。Clash Verge Rev 最终订阅地址：
 
 ```text
 https://<你的Worker域名>/sub/<SUB_TOKEN>

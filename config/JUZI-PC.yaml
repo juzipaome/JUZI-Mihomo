@@ -29,7 +29,6 @@ proxy-providers:
   iKuuu_V2:
     type: http
     url: "__IKUUU_SUBSCRIPTION_URL__"
-    path: ./providers/iKuuu_V2.yaml
     interval: 86400
     health-check:
       enable: true

@@ -7,3 +7,4 @@ wrangler.toml
 .idea/
 .DS_Store
 Thumbs.db
+.wrangler/
