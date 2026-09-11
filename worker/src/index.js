@@ -33,7 +33,7 @@ export default {
       status: 200,
       headers: {
         "Content-Type": "text/yaml; charset=utf-8",
-        "Content-Disposition": 'attachment; filename="JUZI-Mihomo.yaml"',
+        "Content-Disposition": "attachment; filename=JUZI-Mihomo.yaml",
         "Cache-Control": "no-store, no-cache, must-revalidate",
         "Pragma": "no-cache"
       }
