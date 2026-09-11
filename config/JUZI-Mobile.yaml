@@ -1,0 +1,411 @@
+# JUZI Mihomo Mobile 2026
+# Android + Mishka / Mihomo | ROOT TPROXY + Rule
+#
+# 推荐在 Mishka 中使用 ROOT TPROXY：
+# - 不使用 Android VpnService
+# - Mihomo 内置 TUN 在本模板中关闭，避免与 ROOT TPROXY 重复接管流量
+# - ChatGPT / Gemini / Claude / GitHub Copilot 走 AI 组，默认香港
+# - 普通海外流量走 节点选择
+# - 明确的国外下载/CDN走 国外下载；国内域名/IP仍 DIRECT
+# - 免费日本节点参与普通 自动选择，但 AI 的 日本自动 仍只选 IEPL
+#
+mixed-port: 7890
+mode: rule
+allow-lan: false
+ipv6: true
+unified-delay: true
+tcp-concurrent: true
+log-level: warning
+global-client-fingerprint: chrome
+global-ua: clash.meta
+keep-alive-idle: 600
+keep-alive-interval: 30
+find-process-mode: "off"
+external-controller: 127.0.0.1:9090
+secret: ''
+profile:
+  store-selected: true
+  store-fake-ip: true
+proxy-providers:
+  iKuuu_V2:
+    type: http
+    url: __IKUUU_SUBSCRIPTION_URL__
+    interval: 86400
+    health-check:
+      enable: true
+      url: https://www.gstatic.com/generate_204
+      interval: 300
+      timeout: 5000
+    filter: 
+      ^(?!.*(?i)(拒绝|直连|群|邀请|返利|循环|官网|客服|网站|网址|获取|订阅|流量|到期|机场|下次|版本|官址|备用|过期|已用|联系|邮箱|工单|贩卖|通知|倒卖|国内|地址|频道|说明|提示|教程|关注|更新|作者|加入|USE|USED|TOTAL|EXPIRE|EMAIL|Panel|Channel|Author|traffic)).*$
+    override:
+      skip-cert-verify: true
+      udp: true
+sniffer:
+  enable: true
+  sniff:
+    HTTP:
+      ports:
+      - 80
+      - 8080-8880
+      override-destination: true
+    TLS:
+      ports:
+      - 443
+      - 8443
+    QUIC:
+      ports:
+      - 443
+      - 8443
+  skip-domain:
+  - Mijia Cloud
+tun:
+  enable: false
+dns:
+  enable: true
+  listen: 0.0.0.0:1053
+  cache-algorithm: arc
+  ipv6: true
+  prefer-h3: false
+  respect-rules: true
+  enhanced-mode: fake-ip
+  fake-ip-range: 198.18.0.1/16
+  fake-ip-range6: fdfe:dcba:9876::1/64
+  fake-ip-filter-mode: blacklist
+  fake-ip-filter:
+  - rule-set:fakeip-filter
+  - rule-set:ai-cn
+  - rule-set:douyin
+  - +.lan
+  - +.local
+  default-nameserver:
+  - 223.5.5.5
+  - 119.29.29.29
+  proxy-server-nameserver:
+  - https://dns.alidns.com/dns-query
+  - https://doh.pub/dns-query
+  direct-nameserver:
+  - https://dns.alidns.com/dns-query
+  - https://doh.pub/dns-query
+  direct-nameserver-follow-policy: true
+  nameserver-policy:
+    rule-set:private:
+    - https://dns.alidns.com/dns-query
+    - https://doh.pub/dns-query
+    rule-set:cn:
+    - https://dns.alidns.com/dns-query
+    - https://doh.pub/dns-query
+    rule-set:ai-cn:
+    - https://dns.alidns.com/dns-query
+    - https://doh.pub/dns-query
+    rule-set:douyin:
+    - https://dns.alidns.com/dns-query
+    - https://doh.pub/dns-query
+    rule-set:microsoft-cn:
+    - https://dns.alidns.com/dns-query
+    - https://doh.pub/dns-query
+  nameserver:
+  - https://dns.google/dns-query
+  - https://1.1.1.1/dns-query
+proxy-groups:
+- name: 节点选择
+  type: select
+  proxies:
+  - 香港节点
+  - 日本节点
+  - 新加坡节点
+  - 美国节点
+  - 自动选择
+  - 全部节点
+  - DIRECT
+  default-selected: 香港节点
+- name: AI
+  type: select
+  proxies:
+  - 香港节点
+  - 日本节点
+  - 美国节点
+  - 新加坡节点
+  - 节点选择
+  - 全部节点
+  - DIRECT
+  default-selected: 香港节点
+- name: 国外下载
+  type: select
+  proxies:
+  - 下载自动
+  - 节点选择
+  - 日本节点
+  - 香港节点
+  - 全部节点
+  default-selected: 下载自动
+- name: 微软服务
+  type: select
+  proxies:
+  - DIRECT
+  - 国外下载
+  - 节点选择
+  - 香港节点
+  - 日本节点
+  - 美国节点
+  - 全部节点
+  default-selected: DIRECT
+- name: 广告拦截
+  type: select
+  proxies:
+  - REJECT
+  - DIRECT
+  default-selected: REJECT
+- name: 香港节点
+  type: select
+  proxies:
+  - 香港自动
+  use:
+  - iKuuu_V2
+  filter: (?i)(🇭🇰|香港|港|HK|Hong Kong|HongKong)
+  default-selected: 香港自动
+- name: 日本节点
+  type: select
+  proxies:
+  - 日本自动
+  use:
+  - iKuuu_V2
+  filter: (?i)(🇯🇵|日本|日|JP|Japan)
+  default-selected: 日本自动
+- name: 新加坡节点
+  type: select
+  proxies:
+  - 新加坡自动
+  use:
+  - iKuuu_V2
+  filter: (?i)(🇸🇬|新加坡|新|SG|Singapore)
+  exclude-filter: (?i)(新西兰)
+  default-selected: 新加坡自动
+- name: 美国节点
+  type: select
+  proxies:
+  - 美国自动
+  use:
+  - iKuuu_V2
+  filter: (?i)(🇺🇸|美国|美|US|United States|America|Los Angeles|Chicago|Ashburn|Seattle|Kansas)
+  exclude-filter: (?i)(Australia|Russia|RUS|Austria)
+  default-selected: 美国自动
+- name: 全部节点
+  type: select
+  use:
+  - iKuuu_V2
+- name: 下载自动
+  type: url-test
+  use:
+  - iKuuu_V2
+  url: https://www.gstatic.com/generate_204
+  interval: 600
+  tolerance: 100
+  lazy: true
+  timeout: 5000
+  max-failed-times: 2
+  hidden: true
+  filter: (?i)(下载专用)
+- name: 自动选择
+  type: url-test
+  use:
+  - iKuuu_V2
+  url: https://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+  lazy: true
+  max-failed-times: 2
+  hidden: true
+  filter: (?i)(((香港|🇭🇰)|(日本|🇯🇵)).*IEPL|免费-日本)
+  exclude-filter: (?i)(下载专用)
+- name: 香港自动
+  type: url-test
+  use:
+  - iKuuu_V2
+  url: https://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 30
+  lazy: true
+  max-failed-times: 2
+  hidden: true
+  filter: (?i)(香港|🇭🇰).*IEPL
+- name: 日本自动
+  type: url-test
+  use:
+  - iKuuu_V2
+  url: https://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 30
+  lazy: true
+  max-failed-times: 2
+  hidden: true
+  filter: (?i)(日本|🇯🇵).*IEPL
+- name: 新加坡自动
+  type: url-test
+  use:
+  - iKuuu_V2
+  url: https://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 30
+  lazy: true
+  max-failed-times: 2
+  hidden: true
+  filter: (?i)(新加坡|🇸🇬).*IEPL
+- name: 美国自动
+  type: url-test
+  use:
+  - iKuuu_V2
+  url: https://www.gstatic.com/generate_204
+  interval: 300
+  tolerance: 50
+  lazy: true
+  max-failed-times: 2
+  hidden: true
+  filter: (?i)(美国|🇺🇲|🇺🇸).*IEPL
+rules:
+- RULE-SET,private,DIRECT
+- RULE-SET,privateip,DIRECT,no-resolve
+- DOMAIN-SUFFIX,xuxo.top,DIRECT
+- DOMAIN-SUFFIX,deepseek.com,DIRECT
+- DOMAIN-SUFFIX,deepseeksvc.com,DIRECT
+- RULE-SET,ai-cn,DIRECT
+- RULE-SET,douyin,DIRECT
+- RULE-SET,microsoft-cn,DIRECT
+- DOMAIN-SUFFIX,chatgpt.com,AI
+- DOMAIN-SUFFIX,openai.com,AI
+- DOMAIN-SUFFIX,oaistatic.com,AI
+- DOMAIN-SUFFIX,oaiusercontent.com,AI
+- DOMAIN-SUFFIX,claude.ai,AI
+- DOMAIN-SUFFIX,anthropic.com,AI
+- DOMAIN-SUFFIX,gemini.google.com,AI
+- DOMAIN-SUFFIX,aistudio.google.com,AI
+- DOMAIN-SUFFIX,generativelanguage.googleapis.com,AI
+- DOMAIN-SUFFIX,githubcopilot.com,AI
+- RULE-SET,ai,AI
+- DOMAIN-SUFFIX,release-assets.githubusercontent.com,国外下载
+- DOMAIN-SUFFIX,objects.githubusercontent.com,国外下载
+- DOMAIN-SUFFIX,codeload.github.com,国外下载
+- DOMAIN-SUFFIX,pkg-containers.githubusercontent.com,国外下载
+- DOMAIN-SUFFIX,github-releases.githubusercontent.com,国外下载
+- RULE-SET,github,节点选择
+- RULE-SET,onedrive,微软服务
+- RULE-SET,microsoft,微软服务
+- DOMAIN-SUFFIX,dl.google.com,国外下载
+- DOMAIN-SUFFIX,dl.googleusercontent.com,国外下载
+- DOMAIN-SUFFIX,gvt1.com,国外下载
+- DOMAIN-SUFFIX,gvt2.com,国外下载
+- DOMAIN-SUFFIX,download.nvidia.com,国外下载
+- DOMAIN-SUFFIX,files.pythonhosted.org,国外下载
+- DOMAIN-SUFFIX,static.crates.io,国外下载
+- DOMAIN-SUFFIX,cdn-lfs.huggingface.co,国外下载
+- DOMAIN-SUFFIX,cas-bridge.xethub.hf.co,国外下载
+- DOMAIN-SUFFIX,transfer.xethub.hf.co,国外下载
+- RULE-SET,ads,广告拦截
+- RULE-SET,cn,DIRECT
+- RULE-SET,cnip,DIRECT
+- MATCH,节点选择
+rule-anchor:
+  domain:
+    type: http
+    behavior: domain
+    format: mrs
+    interval: 86400
+    proxy: 节点选择
+  ip:
+    type: http
+    behavior: ipcidr
+    format: mrs
+    interval: 86400
+    proxy: 节点选择
+rule-providers:
+  fakeip-filter:
+    type: http
+    behavior: domain
+    format: mrs
+    interval: 86400
+    proxy: 节点选择
+    url: https://github.com/DustinWin/ruleset_geodata/releases/download/mihomo-ruleset/fakeip-filter.mrs
+  private:
+    type: http
+    behavior: domain
+    format: mrs
+    interval: 86400
+    proxy: 节点选择
+    url: https://github.com/DustinWin/ruleset_geodata/releases/download/mihomo-ruleset/private.mrs
+  privateip:
+    type: http
+    behavior: ipcidr
+    format: mrs
+    interval: 86400
+    proxy: 节点选择
+    url: https://github.com/DustinWin/ruleset_geodata/releases/download/mihomo-ruleset/privateip.mrs
+  cn:
+    type: http
+    behavior: domain
+    format: mrs
+    interval: 86400
+    proxy: 节点选择
+    url: https://github.com/DustinWin/ruleset_geodata/releases/download/mihomo-ruleset/cn.mrs
+  cnip:
+    type: http
+    behavior: ipcidr
+    format: mrs
+    interval: 86400
+    proxy: 节点选择
+    url: https://github.com/DustinWin/ruleset_geodata/releases/download/mihomo-ruleset/cnip.mrs
+  microsoft-cn:
+    type: http
+    behavior: domain
+    format: mrs
+    interval: 86400
+    proxy: 节点选择
+    url: https://github.com/DustinWin/ruleset_geodata/releases/download/mihomo-ruleset/microsoft-cn.mrs
+  ai-cn:
+    type: http
+    behavior: domain
+    format: mrs
+    interval: 86400
+    proxy: 节点选择
+    url: https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/category-ai-cn.mrs
+  ai:
+    type: http
+    behavior: domain
+    format: mrs
+    interval: 86400
+    proxy: 节点选择
+    url: https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/category-ai-!cn.mrs
+  github:
+    type: http
+    behavior: domain
+    format: mrs
+    interval: 86400
+    proxy: 节点选择
+    url: https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/github.mrs
+  douyin:
+    type: http
+    behavior: domain
+    format: mrs
+    interval: 86400
+    proxy: 节点选择
+    url: https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/douyin.mrs
+  onedrive:
+    type: http
+    behavior: domain
+    format: mrs
+    interval: 86400
+    proxy: 节点选择
+    url: https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/onedrive.mrs
+  microsoft:
+    type: http
+    behavior: domain
+    format: mrs
+    interval: 86400
+    proxy: 节点选择
+    url: https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/microsoft.mrs
+  ads:
+    type: http
+    behavior: domain
+    format: mrs
+    interval: 86400
+    proxy: 节点选择
+    url: https://raw.githubusercontent.com/TG-Twilight/AWAvenue-Ads-Rule/main/Filters/AWAvenue-Ads-Rule-Clash-Only.Ads.mrs
