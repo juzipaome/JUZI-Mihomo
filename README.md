@@ -28,7 +28,7 @@ worker/wrangler.toml.example
 仓库创建后，模板 Raw 地址类似：
 
 ```text
-https://raw.githubusercontent.com/<你的用户名>/JUZI-Mihomo/main/config/JUZI-PC.yaml
+https://raw.githubusercontent.com/juzipaome/JUZI-Mihomo/main/config/JUZI-PC.yaml
 ```
 
 ## Cloudflare Worker
