@@ -49,7 +49,7 @@ $token = py -3 -c "import secrets; print(secrets.token_urlsafe(32))"
 $token | npx wrangler@latest secret put SUB_TOKEN
 ```
 
-`wrangler.toml` 已被 `.gitignore` 忽略，不要提交它。Clash Verge Rev 最终订阅地址：
+Worker 会返回 `JUZI-Mihomo.yaml` 文件名，Clash Verge Rev 导入时会自动使用这个名称。`wrangler.toml` 已被 `.gitignore` 忽略，不要提交它。Clash Verge Rev 最终订阅地址：
 
 ```text
 https://<你的Worker域名>/sub/<SUB_TOKEN>
