@@ -1,0 +1,9 @@
+.env
+.dev.vars
+wrangler.toml
+*.private.yaml
+*.secret.yaml
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
