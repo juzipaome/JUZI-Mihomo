@@ -3,7 +3,7 @@ main = "src/index.js"
 compatibility_date = "2026-09-11"
 
 [vars]
-TEMPLATE_URL = "https://raw.githubusercontent.com/YOUR_GITHUB_USER/YOUR_REPO/main/config/JUZI-PC.yaml"
+TEMPLATE_URL = "https://raw.githubusercontent.com/juzipaome/JUZI-Mihomo/main/config/JUZI-PC.yaml"
 
 # IKUUU_URL 和 SUB_TOKEN 必须使用 Cloudflare Secret 保存，不要写在这里：
 # npx wrangler secret put IKUUU_URL
