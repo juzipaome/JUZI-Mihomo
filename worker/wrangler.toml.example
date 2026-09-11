@@ -3,7 +3,11 @@ main = "src/index.js"
 compatibility_date = "2026-09-11"
 
 [vars]
+# PC 模板。Worker 会默认把 JUZI-PC.yaml 推导成 JUZI-Mobile.yaml。
 TEMPLATE_URL = "https://raw.githubusercontent.com/juzipaome/JUZI-Mihomo/main/config/JUZI-PC.yaml"
+
+# 可选：如果以后手机模板不和 PC 模板放在同一目录/同一仓库，可显式设置：
+# MOBILE_TEMPLATE_URL = "https://raw.githubusercontent.com/juzipaome/JUZI-Mihomo/main/config/JUZI-Mobile.yaml"
 
 # IKUUU_URL 和 SUB_TOKEN 必须使用 Cloudflare Secret 保存，不要写在这里：
 # npx wrangler secret put IKUUU_URL
