@@ -273,7 +273,7 @@ proxy-groups:
   hidden: true
   filter: (?i)(美国|🇺🇲|🇺🇸).*IEPL
 rules:
-# 顺序原则：私网/国内关键服务 -> AI -> Microsoft -> 明确国外下载 CDN -> 广告 -> CN -> MATCH。
+# 顺序原则：私网/国内关键服务 -> AI -> GitHub 下载 -> 其它 GitHub -> Microsoft -> 其它国外下载 CDN -> 广告 -> CN -> MATCH。
 # 不按“下载器进程”分流，避免 aria2/浏览器下载国内资源时被误送到海外节点。
 # Steam/Windows Update 默认不强制走下载通道，因为它们经常会命中国内/区域 CDN。
 - RULE-SET,private,DIRECT
@@ -295,16 +295,14 @@ rules:
 - DOMAIN-SUFFIX,generativelanguage.googleapis.com,AI
 - DOMAIN-SUFFIX,githubcopilot.com,AI
 - RULE-SET,ai,AI
-- DOMAIN-SUFFIX,github.com,节点选择
-- DOMAIN-SUFFIX,githubassets.com,节点选择
-- DOMAIN-SUFFIX,githubusercontent.com,节点选择
-- RULE-SET,onedrive,微软服务
-- RULE-SET,microsoft,微软服务
 - DOMAIN-SUFFIX,release-assets.githubusercontent.com,国外下载
 - DOMAIN-SUFFIX,objects.githubusercontent.com,国外下载
 - DOMAIN-SUFFIX,codeload.github.com,国外下载
 - DOMAIN-SUFFIX,pkg-containers.githubusercontent.com,国外下载
 - DOMAIN-SUFFIX,github-releases.githubusercontent.com,国外下载
+- RULE-SET,github,节点选择
+- RULE-SET,onedrive,微软服务
+- RULE-SET,microsoft,微软服务
 - DOMAIN-SUFFIX,dl.google.com,国外下载
 - DOMAIN-SUFFIX,dl.googleusercontent.com,国外下载
 - DOMAIN-SUFFIX,gvt1.com,国外下载
@@ -389,6 +387,13 @@ rule-providers:
     interval: 86400
     proxy: 节点选择
     url: https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/category-ai-!cn.mrs
+  github:
+    type: http
+    behavior: domain
+    format: mrs
+    interval: 86400
+    proxy: 节点选择
+    url: https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/github.mrs
   douyin:
     type: http
     behavior: domain
