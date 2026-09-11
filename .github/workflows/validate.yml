@@ -24,15 +24,28 @@ jobs:
         run: |
           python - <<'PY'
           import pathlib, yaml
-          p = pathlib.Path("config/JUZI-PC.yaml")
-          data = yaml.safe_load(p.read_text(encoding="utf-8"))
-          actual = data["proxy-providers"]["iKuuu_V2"].get("url")
+
           expected = "__IKUUU_SUBSCRIPTION_URL__"
-          if actual != expected:
-              raise SystemExit("Refusing public config: iKuuu URL must remain the placeholder.")
-          if data.get("mode") != "rule":
-              raise SystemExit("Expected mode: rule")
-          if data.get("rules", [])[-1] != "MATCH,节点选择":
-              raise SystemExit("Expected final rule: MATCH,节点选择")
-          print("OK: YAML valid and subscription URL is not committed.")
+          files = [
+              pathlib.Path("config/JUZI-PC.yaml"),
+              pathlib.Path("config/JUZI-Mobile.yaml"),
+          ]
+
+          for p in files:
+              data = yaml.safe_load(p.read_text(encoding="utf-8"))
+              actual = data["proxy-providers"]["iKuuu_V2"].get("url")
+              if actual != expected:
+                  raise SystemExit(f"{p}: iKuuu URL must remain the public placeholder")
+              if data.get("mode") != "rule":
+                  raise SystemExit(f"{p}: expected mode: rule")
+              if data.get("rules", [])[-1] != "MATCH,节点选择":
+                  raise SystemExit(f"{p}: expected final rule MATCH,节点选择")
+              if "github" not in data.get("rule-providers", {}):
+                  raise SystemExit(f"{p}: github rule-provider missing")
+
+          mobile = yaml.safe_load(pathlib.Path("config/JUZI-Mobile.yaml").read_text(encoding="utf-8"))
+          if mobile.get("tun", {}).get("enable") is not False:
+              raise SystemExit("Mobile config must keep Mihomo TUN disabled for Mishka ROOT TPROXY")
+
+          print("OK: PC and Mobile YAML are valid and public-safe.")
           PY
